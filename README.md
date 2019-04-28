@@ -23,7 +23,7 @@ whatever that means.
 
 # Screenshots
 
-<img src="screenshots.png" width="951px" />
+![Screenshots](screenshots.png)
 
 # How to use
 
