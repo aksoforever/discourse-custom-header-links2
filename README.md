@@ -22,3 +22,14 @@ whatever that means.
 - Links can be styled individually
 
 # Screenshots
+
+![Screenshots](screenshots.jpg)
+
+# How to use
+
+**Fast track**: if you are a
+[discourse/discourse-custom-header-links](https://github.com/discourse/discourse-custom-header-links)
+user, all you need to do is to copy your former settings to the new component
+and add "`, true`" at the end of each link definition.
+
+[under construction]

@@ -1,10 +1,10 @@
 Custom_header_links2:
   type: list
   default:
-    'External link, this link will open in a new tab,
-    https://meta.discourse.org, vdo, blank, remove|Most Liked, Posts with the
-    most amount of likes, /latest/?order=op_likes, vdo, self, keep|Privacy, Our
-    Privacy Policy, /privacy, vdm, self, keep'
+    'External link, This link will open in a new tab,
+    https://meta.discourse.org, vdo, blank, remove, true|Most Liked, Posts with
+    the most amount of likes, /latest/?order=op_likes, vdo, self, keep,
+    true|Privacy, Our privacy policy, /privacy, vdm, self, keep, true'
   description:
     en:
       'Comma delimited in this order: link text, link title, URL, view, target,
@@ -16,6 +16,6 @@ Custom_header_links2:
       opens in the same tab<br><b>Hide on scroll:</b> remove = hides the link
       when the title is expanded on topic pages keep = keeps the link visible
       even when the title is visible on topic pages<br> <b>Move to hamburger
-      menu:</b> true = if link is not visible in the header due to to "vdo" or
-      "vmo", put it in the hamburger menu<br><b>Link class name:</b>
-      space-separated list of classes to apply to the link'
+      menu:</b> true = if the link is not visible in the header due to "vdo" or
+      "vmo" (see above), put it in the hamburger menu instead<br><b>Link class
+      name:</b> space-separated list of classes to apply to the link'
