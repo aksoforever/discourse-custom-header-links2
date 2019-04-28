@@ -23,7 +23,7 @@ whatever that means.
 
 # Screenshots
 
-![Screenshots](screenshots.jpg)
+![Screenshots](screenshots.png)
 
 # How to use
 
