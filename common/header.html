@@ -1,20 +1,27 @@
 <script type="text/discourse-plugin" version="0.8.20">
   const customHeaderLinks = settings.Custom_header_links2;
 
+  if (!customHeaderLinks.length) return;
+
+  const h = require("virtual-dom").h;
+  const headerLinks = [];
+
   const mobileView = api.container.lookup("site:main").mobileView;
 
   const forHamburgerMenu = []
 
   customHeaderLinks.split("|").map(i => {
-    let seg = $.map(i.split(","), $.trim),
-      linkText = seg[0],
-      linkTitle = seg[1],
-      linkHref = seg[2],
-      deviceClass = "." + seg[3],
-      linkTarget = seg[4] === "self" ? "" : "_blank",
-      keepOnScrollClass = seg[5] === "keep" ? ".keep" : "",
-      moveToHamburgerMenu = seg[6] === 'true',
-      linkClassName = seg[7] ? `.${seg[7].split(' ').join('.')})` : ''
+    const seg = $.map(i.split(","), $.trim);
+    const linkText = seg[0];
+    const linkTitle = seg[1];
+    const linkHref = seg[2];
+    const deviceClass = `.${seg[3]}`;
+    const linkTarget = seg[4] === "self" ? "" : "_blank";
+    const keepOnScrollClass = seg[5] === "keep" ? ".keep" : "";
+    const linkClass = `.${linkText.trim().toLowerCase().replace(/\s/gi, '-')}`;
+
+    const moveToHamburgerMenu = seg[6] === 'true',
+    const manualLinkClass = seg[7] ? `.${seg[7].split(' ').join('.')})` : ''
 
     if (
       moveToHamburgerMenu &&
@@ -23,20 +30,42 @@
       forHamburgerMenu.push({ linkText, linkTitle, linkHref, linkTarget })
     }
 
-    api.decorateWidget("header-buttons:before", helper => {
-      return helper.h(
-        "li.headerLink" + deviceClass + keepOnScrollClass + linkClassName,
-        helper.h(
-          "a",
-          {
-            href: linkHref,
-            title: linkTitle,
-            target: linkTarget
-          },
-          linkText
+    if (!linkTarget) {
+      headerLinks.push(
+        h(
+          `li.headerLink${deviceClass}${keepOnScrollClass}${linkClass}${manualLinkClass}`,
+          h(
+            "a",
+            {
+              title: linkTitle,
+              href: linkHref
+            },
+            linkText
+          )
         )
       );
-    });
+    } else {
+      headerLinks.push(
+        h(
+          `li.headerLink${deviceClass}${keepOnScrollClass}${linkClass}${manualLinkClass}`,
+          h(
+            "a",
+            {
+              title: linkTitle,
+              href: linkHref,
+              target: linkTarget
+            },
+            linkText
+          )
+        )
+      );
+    }
+  });
+
+  api.decorateWidget("header-buttons:before", helper => {
+    return helper.h(
+      "ul.custom-header-links", headerLinks
+    );
   });
 
   api.decorateWidget("home-logo:after", helper => {
@@ -49,21 +78,21 @@
   });
 
   // Enhance the 'menu-links' widget with an option to specify <ul> block classes
-  // See https://github.com/discourse/discourse/blob/58fe45ffd95dc89bf008eeef28509a4fbc72263b/app/assets/javascripts/discourse/widgets/menu-panel.js.es6#L5
-  api.reopenWidget('menu-links', {
-    html(attrs) {
-      let res = this._super(attrs)
-      if (attrs.linksClassName) {
-        res = res.map(node => {
-          if (node.tagName === 'UL') {
-            node.properties.className = attrs.linksClassName
-          }
-          return node
-        })
+    // See https://github.com/discourse/discourse/blob/58fe45ffd95dc89bf008eeef28509a4fbc72263b/app/assets/javascripts/discourse/widgets/menu-panel.js.es6#L5
+    api.reopenWidget('menu-links', {
+      html(attrs) {
+        let res = this._super(attrs)
+        if (attrs.linksClassName) {
+          res = res.map(node => {
+            if (node.tagName === 'UL') {
+              node.properties.className = attrs.linksClassName
+            }
+            return node
+          })
+        }
+        return res
       }
-      return res
-    }
-  })
+    })
 
   // Add the missing links to the hamburger menu
   // https://github.com/discourse/discourse-custom-header-links/blob/master/common/header.html
