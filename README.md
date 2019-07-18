@@ -22,3 +22,7 @@ Further documentation can be found here:
 ## Screenshots
 
 ![Screenshots](screenshots.png)
+
+## License
+
+[MIT](LICENSE)
