@@ -27,7 +27,7 @@
       moveToHamburgerMenu &&
       ((seg[3] === 'vdo' && mobileView) || (seg[3] === 'vmo' && !mobileView))
       ) {
-      forHamburgerMenu.push({ linkText, linkTitle, linkHref, linkTarget })
+      forHamburgerMenu.push({ linkText, linkTitle, linkHref, linkTarget, liClassName: seg[7] })
     }
 
     if (!linkTarget) {
@@ -77,22 +77,19 @@
     }
   });
 
-  // Enhance the 'menu-links' widget with an option to specify <ul> block classes
-    // See https://github.com/discourse/discourse/blob/58fe45ffd95dc89bf008eeef28509a4fbc72263b/app/assets/javascripts/discourse/widgets/menu-panel.js.es6#L5
-    api.reopenWidget('menu-links', {
-      html(attrs) {
-        let res = this._super(attrs)
-        if (attrs.linksClassName) {
-          res = res.map(node => {
-            if (node.tagName === 'UL') {
-              node.properties.className = attrs.linksClassName
-            }
-            return node
-          })
-        }
-        return res
+  // Enhance the 'menu-links' widget with an option to specify <li> classes
+  // See https://github.com/discourse/discourse/blob/58fe45ffd95dc89bf008eeef28509a4fbc72263b/app/assets/javascripts/discourse/widgets/menu-panel.js.es6#L5
+  api.reopenWidget('menu-links', {
+    html(attrs) {
+      let res = this._super(attrs)
+      if (attrs.liClassNames) {
+        res[0].children.forEach((node, i) => {
+          node.properties = Object.assign({}, node.properties, { className: attrs.liClassNames[i % attrs.liClassNames.length] })
+        })
       }
-    })
+      return res
+    }
+  })
 
   // Add the missing links to the hamburger menu
   // https://github.com/discourse/discourse-custom-header-links/blob/master/common/header.html
@@ -122,7 +119,7 @@
         // Create the links manually with the virtual-dom
         const links = forHamburgerMenu.map(l => h(
           "a",
-          { href: l.linkHref, title: l.linkTitle, target: l.linkTarget},
+          { href: l.linkHref, title: l.linkTitle, target: l.linkTarget, className: 'widget-link' },
           l.linkText
         ))
 
@@ -132,7 +129,7 @@
         // way it appears in the navbar
         const linksBlock = this.attach('menu-links', {
           name: 'custom-header-links',
-          linksClassName: 'menu-links headerLink',
+          liClassNames: forHamburgerMenu.map(l => `headerLink ${l.liClassName || ''}`),
           contents: () => links
         })
 
