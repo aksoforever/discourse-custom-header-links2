@@ -1,6 +1,9 @@
 <script type="text/discourse-plugin" version="0.8.20">
-  const customHeaderLinks = settings.Custom_header_links2;
+  // Add an attribute to the <html> tag. This might help the user to style
+  // his header links 
+  $('html').attr('dhp-locale', I18n.locale)
 
+  const customHeaderLinks = settings.Custom_header_links2;
   if (!customHeaderLinks.length) return;
 
   const h = require("virtual-dom").h;
