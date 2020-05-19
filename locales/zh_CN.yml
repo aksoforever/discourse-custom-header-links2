@@ -1,6 +1,3 @@
-    --- 
-    zh_CN: 
-      header_nav_links: "中文链接, 这个中文链接会在新的窗口打开, https://meta.discourse.org, vdo, blank, remove|更多喜欢, 拥有最多喜欢的主题, /latest/?order=op_likes, vdo, self, keep|说明, Our Privacy Policy, /privacy, vdm, self, keep"
-      description: 
-        zh_CN: "Comma delimited in this order: link text, link title, URL, view, target, hide on scroll, move to hamburger menu, link class name<br><b>Link text: </b> The text for the link<br><b>Link title:</b> the text that shows when the link is hovered<br><b>URL:</b> The path for the link (can be relative)<br><b>View:</b> vdm = desktop and mobile, vdo = desktop only, vmo = mobile only<br><b>Target:</b> blank = opens in a new tab, self = opens in the same tab<br><b>Hide on scroll:</b> remove = hides the link when the title is expanded on topic pages keep = keeps the link visible even when the title is visible on topic pages<br> <b>Move to hamburger menu:</b> true = if the link is not visible in the header due to \"vdo\" or \"vmo\" (see above), put it in the hamburger menu instead<br><b>Link class name:</b> space-separated list of classes to apply to the link"
-      
+zh_CN: 
+  header_nav_links: "中文链接, 这个中文链接会在新的窗口打开, https://meta.discourse.org, vdo, blank, remove|更多喜欢, 拥有最多喜欢的主题, /latest/?order=op_likes, vdo, self, keep|说明, Our Privacy Policy, /privacy, vdm, self, keep"
+    
