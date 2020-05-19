@@ -1,0 +1,146 @@
+<script type="text/discourse-plugin" version="0.8.20">
+  // Add an attribute to the <html> tag. This might help the user to style
+  // his header links 
+  $('html').attr('dhp-locale', I18n.locale)
+
+  const customHeaderLinks = I18n.t(themePrefix("header_nav_links"))
+  if (!customHeaderLinks.length) return;
+
+  const h = require("virtual-dom").h;
+  const headerLinks = [];
+
+  const mobileView = api.container.lookup("site:main").mobileView;
+
+  const forHamburgerMenu = []
+
+  customHeaderLinks.split("|").map(i => {
+    const seg = $.map(i.split(","), $.trim);
+    const linkText = seg[0];
+    const linkTitle = seg[1];
+    const linkHref = seg[2];
+    const deviceClass = `.${seg[3]}`;
+    const linkTarget = seg[4] === "self" ? "" : "_blank";
+    const keepOnScrollClass = seg[5] === "keep" ? ".keep" : "";
+    const linkClass = `.${linkText.trim().toLowerCase().replace(/\s/gi, '-')}`;
+
+    const moveToHamburgerMenu = seg[6] === 'true'
+    const manualLinkClass = seg[7] ? `.${seg[7].split(' ').join('.')})` : ''
+
+    if (
+      moveToHamburgerMenu &&
+      ((seg[3] === 'vdo' && mobileView) || (seg[3] === 'vmo' && !mobileView))
+      ) {
+      forHamburgerMenu.push({ linkText, linkTitle, linkHref, linkTarget, liClassName: seg[7] })
+    }
+
+    if (!linkTarget) {
+      headerLinks.push(
+        h(
+          `li.headerLink${deviceClass}${keepOnScrollClass}${linkClass}${manualLinkClass}`,
+          h(
+            "a",
+            {
+              title: linkTitle,
+              href: linkHref
+            },
+            linkText
+          )
+        )
+      );
+    } else {
+      headerLinks.push(
+        h(
+          `li.headerLink${deviceClass}${keepOnScrollClass}${linkClass}${manualLinkClass}`,
+          h(
+            "a",
+            {
+              title: linkTitle,
+              href: linkHref,
+              target: linkTarget
+            },
+            linkText
+          )
+        )
+      );
+    }
+  });
+
+  api.decorateWidget("header-buttons:before", helper => {
+    return helper.h(
+      "ul.custom-header-links", headerLinks
+    );
+  });
+
+  api.decorateWidget("home-logo:after", helper => {
+    let titleVisible = helper.attrs.minimized;
+    if (titleVisible) {
+      $(".d-header").addClass("hide-menus");
+    } else {
+      $(".d-header").removeClass("hide-menus");
+    }
+  });
+
+  // Enhance the 'menu-links' widget with an option to specify <li> classes
+  // See https://github.com/discourse/discourse/blob/58fe45ffd95dc89bf008eeef28509a4fbc72263b/app/assets/javascripts/discourse/widgets/menu-panel.js.es6#L5
+  api.reopenWidget('menu-links', {
+    html(attrs) {
+      let res = this._super(attrs)
+      if (attrs.liClassNames) {
+        res[0].children.forEach((node, i) => {
+          node.properties = Object.assign({}, node.properties, { className: attrs.liClassNames[i % attrs.liClassNames.length] })
+        })
+      }
+      return res
+    }
+  })
+
+  // Add the missing links to the hamburger menu
+  // https://github.com/discourse/discourse-custom-header-links/blob/master/common/header.html
+  // https://github.com/hnb-ku/discourse-custom-hamburger-links/blob/master/common/header.html
+  // https://github.com/discourse/discourse/blob/8e795d82f98cec2ea3d59c5934c8f96c6d12d526/app/assets/javascripts/discourse/widgets/link.js.es6
+  // https://github.com/discourse/discourse/blob/b58867b6e936a5247304e9f06f827cf5012a92ed/app/assets/javascripts/discourse/widgets/hamburger-menu.js.es6#L246
+  if (forHamburgerMenu.length) {
+    const { h } = require("virtual-dom")
+    api.reopenWidget('hamburger-menu', {
+      panelContents() {
+        const res = this._super()
+        /*
+        // The following doesn't work, because the "link" widget doesn't
+        // support the "target" field. I think the reason is that clicks on
+        // "widgets" is managed through the "routeToTag()" function, which
+        // doesn't support "target". See:
+        // https://github.com/discourse/discourse/blob/ec2123809fa488a748c5383bcb9936c9ce4367f2/app/assets/javascripts/discourse/lib/url.js.es6#L167
+        const links = forHamburgerMenu.map(l => this.attach('link', {
+          href: l.linkHref,
+          className: "custom-header-links",
+          rawLabel: l.linkText,
+          rawTitle: l.linkTitle,
+          attributes: { target: l.linkTarget } // DOESN'T WORK, BECAUSE OF THIS BUG:
+        }))
+        */
+
+        // Create the links manually with the virtual-dom
+        const links = forHamburgerMenu.map(l => h(
+          "a",
+          { href: l.linkHref, title: l.linkTitle, target: l.linkTarget, className: 'widget-link' },
+          l.linkText
+        ))
+
+        // Create the links block. We use our modified version, with the
+        // additional linksClassName attribute. This allows us to set the
+        // "headerLink" class, which is required to style the menu item the same
+        // way it appears in the navbar
+        const linksBlock = this.attach('menu-links', {
+          name: 'custom-header-links',
+          liClassNames: forHamburgerMenu.map(l => `headerLink ${l.liClassName || ''}`),
+          contents: () => links
+        })
+
+        // Add the link block at the top of the hamburger menu
+        res.unshift(linksBlock)
+
+        return res
+      }
+    })
+  }
+</script>
