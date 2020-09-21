@@ -1,3 +1,2 @@
 zh_CN: 
-  header_nav_links: "中文链接, 这个中文链接会在新的窗口打开, https://meta.discourse.org, vdo, blank, remove|更多喜欢, 拥有最多喜欢的主题, /latest/?order=op_likes, vdo, self, keep|说明, Our Privacy Policy, /privacy, vdm, self, keep"
-    
+  header_nav_links: "宣传公示,宣传公示,/c/publicity/5,vdo,self,remove, true|规章制度,公司规章制度,/c/regulations/6,vdo,self,remove, true|交流分享,交流分享,/c/leaning/22,vdo,self,remove, true|圈子,圈子,/c/groups/7,vdo,self,remove,true|反馈,反馈,/c/feedback/19,vdo,self,remove,true|人才行政,人才与行政,/c/hr-admin/72,vdo,self,remove,true|论坛,论坛,/c/bbs/68,vdo,self,remove,true|内部应用,The old Quectel EIP is here,/c/apps/1,vdo,self,remove, true,highLightcolor"
